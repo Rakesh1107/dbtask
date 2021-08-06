@@ -19,6 +19,7 @@ public class Tester {
     }
 
     private static int getOption() throws IOException {
+        System.out.println("dummy");
             System.out.println("1. New User? ->");
             System.out.println("2. Existing User? Create new account ->");
             System.out.println("3. Check Balance ->");
