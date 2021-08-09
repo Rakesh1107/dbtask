@@ -8,6 +8,27 @@ import java.util.Map;
 
 public class DataCollector {
 
+    public static void addAccount(ResultSet resultSet) throws SQLException {
+        Account account = createAccount(resultSet);
+        int userId = resultSet.getInt(2);
+        int accountNumber = resultSet.getInt(3);
+
+        if(DataStorage.getAccounts().containsKey(userId)) {
+            Map<Integer, Account> newAccount = DataStorage.getAccounts().get(userId);
+            newAccount.put(accountNumber, account);
+        }
+        else {
+            DataStorage.getAccounts().put(userId, new HashMap<>());
+            DataStorage.getAccounts().get(userId).put(accountNumber, account);
+        }
+    }
+
+    public static void addCustomer(ResultSet customers) throws SQLException {
+        int userId = customers.getInt(1);
+        DataStorage.getCustomers().add(userId);
+    }
+
+    // helper method
     public static Account createAccount(ResultSet resultSet) throws SQLException {
         int userId = resultSet.getInt(2);
         int accountNumber = resultSet.getInt(3);
@@ -21,27 +42,5 @@ public class DataCollector {
         account.setBranch(branch);
 
         return account;
-    }
-
-    public static void addAccount(ResultSet resultSet) throws SQLException {
-        Account account = createAccount(resultSet);
-
-        int userId = resultSet.getInt(2);
-        int accountNumber = resultSet.getInt(3);
-
-        if(DataStorage.getAccounts().containsKey(userId)) {
-            Map<Integer, Account> newAccount = DataStorage.getAccounts().get(userId);
-            newAccount.put(accountNumber, account);
-        }
-
-        else {
-            DataStorage.getAccounts().put(userId, new HashMap<>());
-            DataStorage.getAccounts().get(userId).put(accountNumber, account);
-        }
-    }
-
-    public static void addCustomer(ResultSet customers) throws SQLException {
-        int userId = customers.getInt(1);
-        DataStorage.getCustomers().add(userId);
     }
 }
