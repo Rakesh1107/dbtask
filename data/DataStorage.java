@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class DataStorage {
 
-    static Map<Integer, HashMap<Integer, Account>> userAccounts = DataCollector.getUserAccounts();
+    static Map<Integer, HashMap<Integer, Account>> userAccounts = new HashMap<>();
     static List<Integer> customerIds = new ArrayList<>();
 
     public static long getBalance(Map<Integer, Account> accountDetailsMap) {
@@ -22,10 +22,15 @@ public class DataStorage {
     }
 
     public static void find(int userid) {
-        if(userAccounts.containsKey(userid)) {
-            Map<Integer, Account> account = userAccounts.get(userid);
-            long balance = getBalance(account);
-            System.out.println("Your total balance is " + balance);
+        if(customerIds.contains(userid)) {
+            if(userAccounts.containsKey(userid)) {
+                Map<Integer, Account> account = userAccounts.get(userid);
+                long balance = getBalance(account);
+                System.out.println("Your total balance is " + balance);
+            }
+            else {
+                System.out.println("You don't have an account");
+            }
         }
 
         else {
@@ -35,6 +40,10 @@ public class DataStorage {
 
     public static List<Integer> getCustomers() {
         return customerIds;
+    }
+
+    public static Map<Integer, HashMap<Integer, Account>> getAccounts() {
+        return userAccounts;
     }
 
 

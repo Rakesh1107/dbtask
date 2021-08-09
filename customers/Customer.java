@@ -9,14 +9,6 @@ public class Customer {
     private int mobileNumber;
     private String address;
 
-    public static int generateUserId() {
-        int newUserId = (int) ((Math.random()*99999999) + 10000000);
-        while(DataCollector.getUserAccounts().containsKey(newUserId)) {
-            newUserId = (int) ((Math.random()*99999999) + 10000000);
-        }
-        return newUserId;
-    }
-
     public int getUserId() {
         return userId;
     }

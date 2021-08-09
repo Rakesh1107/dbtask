@@ -1,8 +1,5 @@
 package accounts;
 
-import data.DataCollector;
-
-
 public class Account {
 
     private long accountNumber;
@@ -10,15 +7,6 @@ public class Account {
     private long balance;
     private String branch;
 
-    public static int generateAccountNumber() {
-        int newAccountNumber = (int) ((Math.random()*99999999) + 10000000);
-
-        while(DataCollector.getUserAccounts().containsKey(newAccountNumber)) {
-            newAccountNumber = (int) ((Math.random()*99999999) + 10000000);
-        }
-
-        return newAccountNumber;
-    }
     public long getAccountNumber() {
         return accountNumber;
     }
@@ -53,6 +41,10 @@ public class Account {
     }
 
     public String toString() {
-        return getUserId() + " " + getAccountNumber() + " " + getBalance() + " " + getBranch();
+        return "User id: " + getUserId() +
+                "\nAccount Number: " + getAccountNumber() +
+                "\nTotal Balance: " + getBalance() +
+                "\nBranch: " + getBranch() +
+                "\n-------------------------------------";
     }
 }

@@ -1,13 +1,16 @@
 package statement;
 
 import accounts.Account;
-import customers.Customer;
 import data.DataStorage;
+import generator.Generator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QueryRunner {
 
@@ -21,7 +24,7 @@ public class QueryRunner {
 
             if(DataStorage.getCustomers().contains(userId)) {
                 preparedStatement.setInt(1, userId);
-                long accountNumber = Account.generateAccountNumber();
+                long accountNumber = Generator.generateAccountNumber();
                 preparedStatement.setLong(2, accountNumber);
                 preparedStatement.setLong(3, 0);
                 System.out.println("Enter branch: ");
@@ -30,28 +33,67 @@ public class QueryRunner {
                 preparedStatement.executeUpdate();
                 System.out.println("Created a new account for " + userId + " at branch " + branch);
                 System.out.println("Your new account number is " + accountNumber);
+
+                addToAccounts(userId, accountNumber, branch);
+
             }
             else {
                 System.out.println("User id doesn't exist");
             }
-
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void runQuery(Connection connection, int option) throws  IOException {
-        if(option == 1) {
-            createNewUser(connection);
-        }
-        else if(option == 2) {
-            createNewAccount(connection);
-        }
-        else if(option == 3) {
-            checkBalance();
-        }
+    private static void addToAccounts(int userId, long accountNumber, String branch) {
+        Map<Integer, Account> accounts = DataStorage.getAccounts().getOrDefault(userId, new HashMap<>());
 
+        Account account = new Account();
+        account.setUserId(userId);
+        account.setAccountNumber(accountNumber);
+        account.setBranch(branch);
+
+        accounts.put(userId, account);
+    }
+
+    public static void runQuery(Connection connection, int option) throws  IOException {
+        switch (option) {
+            case 1:
+                createNewUser(connection);
+                break;
+            case 2:
+                createNewAccount(connection);
+                break;
+            case 3:
+                checkBalance();
+                break;
+            case 4:
+                getAccounts();
+                break;
+
+            default:
+                System.out.println("Enter valid option");
+        }
+    }
+
+    private static void getAccounts() throws IOException {
+        System.out.println("Enter your user id");
+        int userId = Integer.parseInt(inputReader.readLine());
+        if(DataStorage.getCustomers().contains(userId)) {
+            if(DataStorage.getAccounts().containsKey(userId)) {
+                for(Account account: DataStorage.getAccounts().get(userId).values()) {
+
+                        System.out.println(account);
+                }
+            }
+            else {
+                System.out.println("You don't have an account");
+            }
+        }
+        else {
+            System.out.println("User id doesn't exist");
+        }
     }
 
     private static void checkBalance() throws IOException {
@@ -64,7 +106,7 @@ public class QueryRunner {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("insert into customers (userid, name, mobile, address) values(?,?,?,?)");
 
-            int userId = Customer.generateUserId();
+            int userId = Generator.generateUserId();
             preparedStatement.setInt(1, userId);
             System.out.println("Enter your name: ");
             String name = inputReader.readLine();
@@ -78,10 +120,16 @@ public class QueryRunner {
             preparedStatement.executeUpdate();
             System.out.println("Hi " + name + ", Thanks for joining our community. New User id created");
             System.out.println("Your user id is " + userId + ". You can start creating accounts with us!");
+
+            addToUsers(userId);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void addToUsers(int userId) {
+        DataStorage.getCustomers().add(userId);
     }
 
 
